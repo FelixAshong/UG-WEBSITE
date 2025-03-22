@@ -13,7 +13,7 @@ const config = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1rem",
       screens: {
         "2xl": "1400px",
       },
@@ -26,11 +26,11 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#153d6f", // Updated University of Ghana blue
+          DEFAULT: "#153d6f", // University of Ghana blue
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#b59a64", // Updated University of Ghana gold
+          DEFAULT: "#b59a64", // University of Ghana gold
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {

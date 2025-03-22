@@ -1,480 +1,647 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
-  ChevronRight,
   Search,
-  Menu,
+  ChevronRight,
   Facebook,
   Twitter,
   Instagram,
   Youtube,
-  Mail,
-  Phone,
+  Linkedin,
   MapPin,
-  ArrowRight,
+  Phone,
+  Mail,
 } from "lucide-react"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { DropdownMenu } from "@/components/dropdown-menu"
+import { MainNav } from "@/components/main-nav"
+import HeroSlideshow from "@/components/hero-slideshow"
+import VideoBackground from "@/components/video-background"
+import NewsCard from "@/components/news-card"
+import FeaturedLink from "@/components/featured-link"
+import EventCard from "@/components/event-card"
+
+// Top navigation items
+const topNavItems = [
+  {
+    label: "Student",
+    items: [
+      { label: "STS Portal", href: "#" },
+      { label: "Library", href: "#" },
+      { label: "Sakai", href: "#" },
+      { label: "Student Email", href: "#" },
+      { label: "Academic Support and Services", href: "#" },
+    ],
+  },
+  {
+    label: "Alumni",
+    items: [
+      { label: "Alumni Portal", href: "#" },
+      { label: "Alumni Association", href: "#" },
+      { label: "Alumni Events", href: "#" },
+    ],
+  },
+  {
+    label: "Faculty & Staff",
+    items: [
+      { label: "Staff Email", href: "#" },
+      { label: "STS Portal", href: "#" },
+      { label: "HRODD", href: "#" },
+    ],
+  },
+  {
+    label: "MIS Web",
+    items: [
+      { label: "MIS Portal", href: "#" },
+      { label: "IT Services", href: "#" },
+    ],
+  },
+]
+
+// Main navigation items
+const mainNavItems = [
+  {
+    label: "About UG",
+    href: "#",
+    items: [
+      { label: "Overview", href: "#" },
+      { label: "History", href: "#" },
+      { label: "Mission and Vision", href: "#" },
+      { label: "Leadership & Directorates", href: "#" },
+      { label: "Affiliates and Partners", href: "#" },
+    ],
+  },
+  {
+    label: "Academics",
+    href: "#",
+    items: [
+      { label: "Overview", href: "#" },
+      { label: "Colleges", href: "#" },
+      { label: "Programmes", href: "#" },
+      { label: "Academic Calendar", href: "#" },
+      { label: "Library", href: "#" },
+      { label: "UG Journals", href: "#" },
+    ],
+  },
+  {
+    label: "Admissions",
+    href: "#",
+    items: [
+      { label: "Overview", href: "#" },
+      { label: "Undergraduate", href: "#" },
+      { label: "Graduate", href: "#" },
+      { label: "International Admissions", href: "#" },
+      { label: "Distance & Continuing", href: "#" },
+    ],
+  },
+  {
+    label: "Research",
+    href: "#",
+    items: [
+      { label: "Overview", href: "#" },
+      { label: "Research Centers", href: "#" },
+      { label: "Publications", href: "#" },
+    ],
+  },
+  {
+    label: "News",
+    href: "#",
+  },
+  {
+    label: "Student Life",
+    href: "#",
+  },
+]
 
 export default function Home() {
-  // Slideshow state
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const slides = [
-    {
-      image: "/placeholder.svg?height=500&width=1920&text=Campus+Main",
-      alt: "University Campus Main Building",
-    },
-    {
-      image: "/placeholder.svg?height=500&width=1920&text=Campus+Library",
-      alt: "University Library",
-    },
-    {
-      image: "/placeholder.svg?height=500&width=1920&text=Campus+Students",
-      alt: "Students on Campus",
-    },
-  ]
+  const { scrollY } = useScroll()
+  const headerRef = useRef<HTMLElement>(null)
 
-  // Auto-rotate slides
+  const headerBgOpacity = useTransform(scrollY, [0, 100], [0, 1])
+  const headerShadow = useTransform(scrollY, [0, 100], [0, 0.1])
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [slides.length])
+    const handleScroll = () => {
+      if (headerRef.current) {
+        if (window.scrollY > 100) {
+          headerRef.current.classList.add("py-2")
+          headerRef.current.classList.remove("py-3")
+        } else {
+          headerRef.current.classList.add("py-3")
+          headerRef.current.classList.remove("py-2")
+        }
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Top Bar */}
+      {/* Top Navigation Bar */}
       <div className="bg-[#153d6f] text-white py-2 px-4">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="hidden md:flex space-x-4 text-sm">
-            <Link href="#" className="hover:underline">
-              Students
-            </Link>
-            <Link href="#" className="hover:underline">
-              Faculty & Staff
-            </Link>
-            <Link href="#" className="hover:underline">
-              Alumni
-            </Link>
-            <Link href="#" className="hover:underline">
-              Visitors
-            </Link>
+          <div className="hidden md:flex space-x-6">
+            {topNavItems.map((item) => (
+              <DropdownMenu key={item.label} label={item.label} items={item.items} />
+            ))}
           </div>
-          <div className="flex space-x-4">
-            <Link href="#" className="text-sm hover:underline">
-              Apply
+          <div className="flex items-center space-x-4">
+            <Link
+              href="#"
+              className="text-sm font-medium bg-[#b59a64] hover:bg-[#c9ad75] transition-colors duration-300 px-4 py-2 rounded"
+            >
+              GIVE TO UG
             </Link>
-            <Link href="#" className="text-sm hover:underline">
-              Give
-            </Link>
-            <Link href="#" className="text-sm hover:underline">
-              Contact
-            </Link>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search"
+                className="py-1 px-3 text-sm rounded text-black w-24 md:w-32 focus:outline-none focus:ring-2 focus:ring-[#b59a64] transition-all duration-300"
+              />
+              <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Header */}
-      <header className="bg-white py-4 px-4 shadow-md">
+      <motion.header
+        ref={headerRef}
+        className="sticky top-0 z-50 bg-white py-3 px-4 transition-all duration-300"
+        style={{
+          boxShadow: headerShadow.get() ? `0 4px 6px rgba(0, 0, 0, ${headerShadow.get()})` : "none",
+          backgroundColor: `rgba(255, 255, 255, ${headerBgOpacity.get()})`,
+        }}
+      >
         <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Image
-              src="/placeholder.svg?height=60&width=60"
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-03-22%20at%209.51.33%E2%80%AFAM-54RT2Q6uHWFqylyaSj6JqWJTovkvW0.png"
               alt="University of Ghana Logo"
-              width={60}
-              height={60}
-              className="h-15"
+              width={40}
+              height={40}
+              className="h-10 w-auto"
             />
             <div className="text-[#153d6f]">
-              <h1 className="text-xl md:text-2xl font-bold">UNIVERSITY OF GHANA</h1>
-              <p className="text-xs md:text-sm">Integri Procedamus</p>
+              <h1 className="text-sm md:text-base font-bold">UNIVERSITY OF GHANA</h1>
             </div>
           </div>
 
-          <div className="hidden md:flex items-center space-x-6">
-            <nav>
-              <ul className="flex space-x-6 font-medium">
-                <li>
-                  <Link href="#" className="text-[#153d6f] hover:text-[#b59a64]">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[#153d6f] hover:text-[#b59a64]">
-                    Academics
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[#153d6f] hover:text-[#b59a64]">
-                    Admissions
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[#153d6f] hover:text-[#b59a64]">
-                    Research
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[#153d6f] hover:text-[#b59a64]">
-                    Campus Life
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-            <Button variant="ghost" size="icon" className="text-[#153d6f]">
-              <Search className="h-5 w-5" />
-            </Button>
-          </div>
+          <MainNav items={mainNavItems} />
 
           <Button variant="ghost" size="icon" className="md:hidden text-[#153d6f]">
-            <Menu className="h-6 w-6" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
           </Button>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Hero Section with Slideshow */}
-      <section className="relative h-[500px] w-full">
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <Image
-              src={slide.image || "/placeholder.svg"}
-              alt={slide.alt}
-              fill
-              className="object-cover brightness-75"
-              priority={index === 0}
-            />
-          </div>
-        ))}
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-4">
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-4">Welcome to University of Ghana</h2>
-          <p className="text-xl md:text-2xl text-center mb-8">Ghana's Premier University of Excellence</p>
-          <div className="flex space-x-4">
-            <Button className="bg-[#b59a64] hover:bg-[#9a8354] text-white">Apply Now</Button>
-            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-[#153d6f]">
-              Explore Programs
-            </Button>
-          </div>
-        </div>
+      {/* Hero Section with Enhanced Slideshow */}
+      <HeroSlideshow />
 
-        {/* Slideshow indicators */}
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full ${index === currentSlide ? "bg-[#b59a64]" : "bg-white/50"}`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* News and Announcements */}
-      <section className="py-12 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-[#153d6f]">News & Announcements</h2>
-            <Link href="#" className="text-[#b59a64] hover:underline flex items-center">
-              View All <ChevronRight className="h-4 w-4 ml-1" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <Image
-                  src={`/placeholder.svg?height=200&width=400&text=News+${item}`}
-                  alt={`News ${item}`}
-                  width={400}
-                  height={200}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <span className="text-sm text-gray-500">March 15, 2025</span>
-                  <h3 className="text-xl font-semibold my-2 text-[#153d6f]">
-                    University Announces New Research Initiative
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    The University of Ghana has launched a groundbreaking research program focused on sustainable
-                    development and climate change adaptation.
-                  </p>
-                  <Link href="#" className="text-[#b59a64] hover:underline font-medium">
-                    Read More
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Links */}
+      {/* News Section */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#153d6f] mb-8 text-center">Quick Links</h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { title: "Academic Calendar", icon: "calendar" },
-              { title: "Library Resources", icon: "book" },
-              { title: "Student Portal", icon: "users" },
-              { title: "Campus Map", icon: "map" },
-              { title: "Courses & Programs", icon: "graduation-cap" },
-              { title: "Research Publications", icon: "file-text" },
-              { title: "Career Services", icon: "briefcase" },
-              { title: "International Programs", icon: "globe" },
-            ].map((link, index) => (
-              <Link
-                href="#"
-                key={index}
-                className="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-              >
-                <div className="w-16 h-16 rounded-full bg-[#153d6f] text-white flex items-center justify-center mb-3">
-                  <Image
-                    src={`/placeholder.svg?height=40&width=40&text=${link.icon}`}
-                    alt={link.icon}
-                    width={40}
-                    height={40}
-                    className="w-8 h-8"
-                  />
-                </div>
-                <span className="text-center font-medium text-[#153d6f]">{link.title}</span>
+          <div className="flex justify-between items-center mb-8">
+            <motion.h2
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-xl font-bold text-[#153d6f]"
+            >
+              News from UG
+            </motion.h2>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="flex items-center"
+            >
+              <Link href="#" className="text-[#b59a64] text-sm hover:underline mr-4 group">
+                Explore more news
+                <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-[#b59a64]"></span>
               </Link>
-            ))}
+              <Button className="bg-[#153d6f] hover:bg-[#0e2a4f] text-white h-8 px-3 py-0 text-xs">GO</Button>
+            </motion.div>
           </div>
-        </div>
-      </section>
 
-      {/* Programs */}
-      <section className="py-12 px-4 bg-[#153d6f] text-white">
-        <div className="container mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Our Programs</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <NewsCard
+              image="/images/news1.jpg"
+              title="African Knowledge is Authentic and Must Be Recognised in Global Discourse – Prof. Amfo at Oregon Lecture"
+              date="March 18, 2025"
+              delay={0.1}
+            />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              "Arts & Humanities",
-              "Business & Economics",
-              "Science & Technology",
-              "Social Sciences",
-              "Health Sciences",
-              "Law",
-            ].map((program, index) => (
-              <div
-                key={index}
-                className="bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors"
-              >
-                <h3 className="text-xl font-semibold mb-3">{program}</h3>
-                <p className="text-white/80 mb-4">
-                  Discover our diverse range of undergraduate and graduate programs in {program.toLowerCase()}.
-                </p>
-                <Link href="#" className="text-[#b59a64] hover:underline flex items-center">
-                  Explore Programs <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            <div className="space-y-6">
+              <NewsCard
+                title="Vice-Chancellor Amfo Admonishes Innovators with Honorary Doctorate at 2023 Aggrey-Fraser-Guggisberg Memorial Lectures"
+                date="March 16, 2025"
+                delay={0.2}
+              />
 
-      {/* Campus Life */}
-      <section className="py-12 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="md:w-1/2">
-              <h2 className="text-2xl md:text-3xl font-bold text-[#153d6f] mb-4">Campus Life</h2>
-              <p className="text-gray-600 mb-6">
-                The University of Ghana offers a vibrant campus experience with numerous opportunities for personal and
-                professional growth. From student clubs and organizations to cultural events and sports activities,
-                there's something for everyone.
-              </p>
-              <p className="text-gray-600 mb-6">
-                Our beautiful campus provides state-of-the-art facilities, comfortable accommodation, and a supportive
-                community that fosters academic excellence and holistic development.
-              </p>
-              <Button className="bg-[#b59a64] hover:bg-[#9a8354] text-white">Discover Campus Life</Button>
-            </div>
-            <div className="md:w-1/2 grid grid-cols-2 gap-4">
-              <Image
-                src="/placeholder.svg?height=250&width=250&text=Campus+1"
-                alt="Campus Life"
-                width={250}
-                height={250}
-                className="rounded-lg object-cover h-full w-full"
+              <NewsCard
+                title="2023 Aggrey-Fraser-Guggisberg Lecture: Challenges Researchers to Shift Narratives from Poverty to Innovation in Africa"
+                date="March 14, 2025"
+                delay={0.3}
               />
-              <Image
-                src="/placeholder.svg?height=250&width=250&text=Campus+2"
-                alt="Campus Life"
-                width={250}
-                height={250}
-                className="rounded-lg object-cover h-full w-full"
-              />
-              <Image
-                src="/placeholder.svg?height=250&width=250&text=Campus+3"
-                alt="Campus Life"
-                width={250}
-                height={250}
-                className="rounded-lg object-cover h-full w-full"
-              />
-              <Image
-                src="/placeholder.svg?height=250&width=250&text=Campus+4"
-                alt="Campus Life"
-                width={250}
-                height={250}
-                className="rounded-lg object-cover h-full w-full"
+
+              <NewsCard
+                title="College of Education Chancellor Scholars at Inaugural Ceremony"
+                date="March 13, 2025"
+                delay={0.4}
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Postgraduate Announcement Banner */}
-      <section className="py-8 px-4 bg-[#b59a64] text-white">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="text-center md:text-left mb-4 md:mb-0">
-            <h2 className="text-2xl md:text-3xl font-bold">Postgraduate Programme Applications Opened</h2>
-          </div>
-          <Link
-            href="#"
-            className="flex items-center space-x-2 bg-white text-[#153d6f] px-6 py-3 rounded-full font-medium hover:bg-opacity-90 transition-colors"
+      {/* Strategic Plan Section */}
+      <section className="relative h-[250px] w-full overflow-hidden">
+        <Image src="/images/campus-building.jpg" alt="University Building" fill className="object-cover" />
+        <div className="absolute inset-0 bg-black/40 flex items-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+            className="container mx-auto px-4 text-center"
           >
-            <span>Click here for more details</span>
-            <div className="w-8 h-8 rounded-full border-2 border-[#153d6f] flex items-center justify-center">
-              <ArrowRight className="h-4 w-4" />
-            </div>
-          </Link>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              UG's New Strategic Plan (2024-2029) and Key Documents
+            </h2>
+            <p className="text-white text-sm mb-4">UG's New Strategic Plan (2024-2029) and Key Documents</p>
+            <Button className="bg-[#b59a64] hover:bg-[#9a8354] text-white transition-all duration-300 transform hover:scale-105">
+              Find Out More
+            </Button>
+          </motion.div>
         </div>
       </section>
+
+      {/* Events and Announcements */}
+      <section className="py-12 px-4 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Upcoming Events */}
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <motion.h2
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  viewport={{ once: true }}
+                  className="text-xl font-bold text-[#153d6f]"
+                >
+                  Upcoming Events
+                </motion.h2>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Link href="#" className="text-[#b59a64] text-xs hover:underline flex items-center group">
+                    View all events
+                    <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" />
+                  </Link>
+                </motion.div>
+              </div>
+
+              <EventCard
+                date={{ month: "APR", day: "27" }}
+                title="Inaugural Lecture by Prof. Maria Ana Borges Soares"
+                venue="Great Hall"
+                delay={0.2}
+              />
+            </div>
+
+            {/* Announcements */}
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <motion.h2
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  viewport={{ once: true }}
+                  className="text-xl font-bold text-[#153d6f]"
+                >
+                  Announcements
+                </motion.h2>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Link href="#" className="text-[#b59a64] text-xs hover:underline group">
+                    <span className="inline-block transform group-hover:translate-x-1 transition-transform duration-300">
+                      Explore more announcements
+                    </span>
+                  </Link>
+                </motion.div>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "Post-Doctoral Engagement Guide",
+                    date: "March 12, 2025",
+                    delay: 0.2,
+                  },
+                  {
+                    title:
+                      "University of Nairobi - Sasakawa Foundation of Ghana Endowment Fund Award For The 2023/2024 Academic Awards Prize",
+                    date: "March 8, 2025",
+                    delay: 0.3,
+                  },
+                  {
+                    title: "Extension of Diploma in Diploma (DIP) programme by UGBS & Corona Graduate Institute",
+                    date: "February 28, 2025",
+                    delay: 0.4,
+                  },
+                  {
+                    title:
+                      "Call for Applications - TDR Postgraduate Scholarship in Implementation Research (2022-2026)",
+                    date: "February 24, 2025",
+                    delay: 0.5,
+                  },
+                ].map((announcement, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: announcement.delay }}
+                    viewport={{ once: true }}
+                  >
+                    <h3 className="text-sm font-bold text-[#153d6f] hover:text-[#b59a64] transition-colors duration-300">
+                      <Link href="#">{announcement.title}</Link>
+                    </h3>
+                    <p className="text-xs text-gray-500">{announcement.date}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Featured Links */}
+            <div>
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="text-xl font-bold text-[#153d6f] mb-6"
+              >
+                Featured Links
+              </motion.h2>
+
+              <div className="space-y-2">
+                {[
+                  "Amnesty Registration",
+                  "University Policies and Strategic Documents",
+                  "Course Lecturer Evaluation",
+                  "Join the UG Alumni Network",
+                  "University Student Organization Initiative",
+                  "Vacancy Announcement",
+                  "Schedule of Fees",
+                  "Academic Calendar",
+                ].map((link, index) => (
+                  <FeaturedLink key={index} title={link} href="#" index={index} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Community Section with Video Background */}
+      <VideoBackground videoSrc="/videos/campus-life.mp4">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+          className="text-white text-lg max-w-2xl mx-auto"
+        >
+          We invite you to be part of our vibrant university community. A warm welcome awaits you as we prepare you to
+          discover and harness your full potential.
+        </motion.p>
+      </VideoBackground>
 
       {/* Footer */}
-      <footer className="bg-[#153d6f] text-white pt-12 pb-6 px-4">
+      <footer className="bg-[#153d6f] text-white pt-12 pb-4 px-4">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">Contact Us</h3>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <MapPin className="h-5 w-5 mr-2 mt-0.5" />
-                  <span>P.O. Box LG 25, Legon, Accra, Ghana</span>
-                </li>
-                <li className="flex items-center">
-                  <Phone className="h-5 w-5 mr-2" />
-                  <span>+233 302 213820</span>
-                </li>
-                <li className="flex items-center">
-                  <Mail className="h-5 w-5 mr-2" />
-                  <span>info@ug.edu.gh</span>
-                </li>
-              </ul>
-            </div>
+          <div className="flex flex-col md:flex-row justify-between mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="mb-6 md:mb-0"
+            >
+              <Image
+                src="/images/ug-logo-white.png"
+                alt="University of Ghana Logo"
+                width={150}
+                height={60}
+                className="h-12 w-auto mb-4"
+              />
+              <p className="text-xs uppercase mb-1 flex items-center">
+                <MapPin className="h-3 w-3 mr-1" /> P.O. BOX LG 25
+              </p>
+              <p className="text-xs uppercase mb-1">LEGON, ACCRA</p>
+              <p className="text-xs uppercase mb-1 flex items-center">
+                <Phone className="h-3 w-3 mr-1" /> +233 302 213820
+              </p>
+              <p className="text-xs uppercase flex items-center">
+                <Mail className="h-3 w-3 mr-1" /> pad@ug.edu.gh
+              </p>
+            </motion.div>
 
-            <div>
-              <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="hover:underline">
-                    About UG
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    Admissions
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    Academic Calendar
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    Library
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    Research
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+              >
+                <h3 className="text-[#b59a64] font-bold mb-4">COLLEGES</h3>
+                <ul className="space-y-2 text-xs">
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Basic and Applied Sciences
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Education
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Health Sciences
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Humanities
+                    </Link>
+                  </li>
+                </ul>
+              </motion.div>
 
-            <div>
-              <h3 className="text-xl font-bold mb-4">Resources</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="hover:underline">
-                    Student Portal
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    Staff Portal
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    E-Learning
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline">
-                    News & Events
-                  </Link>
-                </li>
-              </ul>
-            </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                <h3 className="text-[#b59a64] font-bold mb-4">QUICK LINKS</h3>
+                <ul className="space-y-2 text-xs">
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Academic Support and Services
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Procurement Opportunities
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Public Affairs Directorate (PAD)
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Employment Opportunities
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Library
+                    </Link>
+                  </li>
+                </ul>
+              </motion.div>
 
-            <div>
-              <h3 className="text-xl font-bold mb-4">Connect With Us</h3>
-              <div className="flex space-x-4 mb-6">
-                <Link href="#" className="hover:text-[#b59a64]">
-                  <Facebook className="h-6 w-6" />
-                </Link>
-                <Link href="#" className="hover:text-[#b59a64]">
-                  <Twitter className="h-6 w-6" />
-                </Link>
-                <Link href="#" className="hover:text-[#b59a64]">
-                  <Instagram className="h-6 w-6" />
-                </Link>
-                <Link href="#" className="hover:text-[#b59a64]">
-                  <Youtube className="h-6 w-6" />
-                </Link>
-              </div>
-              <h4 className="font-medium mb-2">Subscribe to our newsletter</h4>
-              <div className="flex">
-                <input type="email" placeholder="Your email" className="px-3 py-2 rounded-l-md text-black w-full" />
-                <Button className="bg-[#b59a64] hover:bg-[#9a8354] rounded-l-none">Subscribe</Button>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                <h3 className="text-[#b59a64] font-bold mb-4">GIVE TO UG</h3>
+                <div className="flex space-x-2 mb-4">
+                  <Link href="#" className="social-icon text-white hover:text-[#b59a64]">
+                    <Facebook className="h-4 w-4" />
+                  </Link>
+                  <Link href="#" className="social-icon text-white hover:text-[#b59a64]">
+                    <Twitter className="h-4 w-4" />
+                  </Link>
+                  <Link href="#" className="social-icon text-white hover:text-[#b59a64]">
+                    <Youtube className="h-4 w-4" />
+                  </Link>
+                  <Link href="#" className="social-icon text-white hover:text-[#b59a64]">
+                    <Instagram className="h-4 w-4" />
+                  </Link>
+                  <Link href="#" className="social-icon text-white hover:text-[#b59a64]">
+                    <Linkedin className="h-4 w-4" />
+                  </Link>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                <h3 className="text-[#b59a64] font-bold mb-4">ADMISSIONS</h3>
+                <ul className="space-y-2 text-xs">
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Undergraduate
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Graduate
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      International
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Distance Education
+                    </Link>
+                  </li>
+                </ul>
+
+                <h3 className="text-[#b59a64] font-bold mt-6 mb-4">ALUMNI</h3>
+                <ul className="space-y-2 text-xs">
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Alumni Relations Office
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Alumni Association (Ghana)
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                      Alumni Association (North America)
+                    </Link>
+                  </li>
+                </ul>
+              </motion.div>
             </div>
           </div>
 
-          <div className="border-t border-white/20 pt-6 flex flex-col md:flex-row justify-between items-center">
-            <p>&copy; {new Date().getFullYear()} University of Ghana. All Rights Reserved.</p>
-            <div className="flex space-x-4 mt-4 md:mt-0">
-              <Link href="#" className="text-sm hover:underline">
-                Privacy Policy
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            viewport={{ once: true }}
+            className="border-t border-white/20 pt-4 text-xs text-center"
+          >
+            <p>Copyright © {new Date().getFullYear()}, University of Ghana</p>
+            <div className="flex justify-center space-x-4 mt-2">
+              <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                All Rights Reserved
               </Link>
-              <Link href="#" className="text-sm hover:underline">
-                Terms of Use
-              </Link>
-              <Link href="#" className="text-sm hover:underline">
-                Sitemap
+              <span>|</span>
+              <Link href="#" className="hover:underline hover:text-[#b59a64] transition-colors duration-300">
+                Contact Support
               </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
       </footer>
     </div>
