@@ -1,13 +1,45 @@
 "use client"
 
 import type * as React from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
+
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
 function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
+  // Custom render function for the navigation
+  const renderNavigation = ({ nextMonth, previousMonth, onNextClick, onPreviousClick }: any) => {
+    return (
+      <div className="space-x-1 flex items-center">
+        <button
+          onClick={onPreviousClick}
+          disabled={!previousMonth}
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1",
+          )}
+          aria-label="Previous month"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <button
+          onClick={onNextClick}
+          disabled={!nextMonth}
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1",
+          )}
+          aria-label="Next month"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    )
+  }
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -39,6 +71,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
         ...classNames,
+      }}
+      components={{
+        // Use empty components to avoid the default icons
+        IconLeft: () => null,
+        IconRight: () => null,
       }}
       {...props}
     />
